@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">MapsApp</string>
+    <string name="aubergine_label">Peta Aubergine</string>
+    <string name="normal_label">Peta Normal</string>
+    <string name="terrain_label">Peta Topografi</string>
+    <string name="satellite_label">Citra Satelit</string>
+    <string name="hybrid_label">Peta Campuran</string>
+</resources>
