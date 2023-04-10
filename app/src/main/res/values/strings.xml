@@ -3,4 +3,10 @@
     <string name="title_activity_maps">MapsActivity</string>
 
     <string name="MAPS_API_KEY">AIzaSyAQInTQFUMVjpuuG8kSlawldFfP0Dy6smc</string>
+
+    <string name="aubergine_label">Aubergine Map</string>
+    <string name="normal_label">Normal Map</string>
+    <string name="terrain_label">Terrain Map</string>
+    <string name="satellite_label">Satellite Map</string>
+    <string name="hybrid_label">Hybrid Map</string>
 </resources>

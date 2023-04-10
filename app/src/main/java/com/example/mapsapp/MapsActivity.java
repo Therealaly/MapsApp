@@ -7,7 +7,13 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -26,8 +32,10 @@ import com.google.android.gms.maps.model.PointOfInterest;
 
 import java.util.Locale;
 
-public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
+public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, SensorEventListener {
 
+    private Sensor mSensorLight;
+    private SensorManager mSensorManager;
     private GoogleMap mMap;
     private ActivityMapsBinding binding;
 
@@ -42,6 +50,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        mSensorLight = mSensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
     }
 
     /**
@@ -78,13 +89,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
-            case R.id.normal_map:
+            case R.id.aubergine_map:
                 mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.style_json));
+                return true;
+            case R.id.normal_map:
                 mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
                 return true;
             case R.id.sattelite_map:
                 mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
-                return true
+                return true;
             case R.id.terrain_map:
                 mMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
                 return true;
@@ -141,4 +154,36 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (mSensorLight == null) return;
+        mSensorManager.registerListener(this, mSensorLight, SensorManager.SENSOR_DELAY_NORMAL);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mSensorManager.unregisterListener(this);
+    }
+
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        float currentValue = event.values[0];
+        int sensorType = event.sensor.getType();
+        switch (sensorType) {
+            case Sensor.TYPE_LIGHT:
+                if (currentValue < 1500) {
+                    mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.style_json));
+                } else if (currentValue >= 1500) {
+                    mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+                }
+                break;
+        }
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
+    }
 }
